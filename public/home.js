@@ -20,8 +20,7 @@ const JoinRoom = async () => {
   }
 
   console.log(numberRoom);
-
-  showModal(numberRoom);
+  window.location.href = `/chat/${numberRoom}`;
 };
 
 const JoinRoomWalkieTalkie = async () => {
@@ -78,11 +77,25 @@ function addDash(input) {
   return input.replace(/(.{3})/g, "$1-").replace(/-$/, "");
 }
 
-fetch("http://localhost:3030/api/room/read")
+const dataRead = {
+  filter: {
+    username: user,
+  },
+};
+
+fetch("http://localhost:3030/api/room/read", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(dataRead),
+})
   .then((response) => response.json())
-  .then((data) =>
+  .then((data) => {
+    // console.log(data);
+
     data.query.map((e) => {
-      console.log(e);
+      // console.log(e);
 
       if (e.category === "VIDEO_CONFERENCE") {
         const roomChat = document.querySelector(".room_video_conference");
@@ -119,6 +132,6 @@ fetch("http://localhost:3030/api/room/read")
         // Append the <a> element to the room_chat element
         roomChat.appendChild(roomLink);
       }
-    })
-  )
+    });
+  })
   .catch((error) => console.error(error));

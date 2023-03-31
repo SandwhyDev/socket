@@ -69,11 +69,11 @@ passport.deserializeUser((user, done) => {
   done(null, user);
 });
 
-Issuer.discover("http://localhost:9000/oidc").then(function (oidcIssuer) {
+Issuer.discover("http://localhost:4000/oidc").then(function (oidcIssuer) {
   var client = new oidcIssuer.Client({
-    client_id: "Zu72QiCTlzAogmqCSr_-P",
+    client_id: "PlGg3ioi1Talwr5-u_wSD",
     client_secret:
-      "aykcnCVE8YqtkrPGBrGrgTu87M3kB0sCT1-cirm-CYLvN9a-6_FevnAYHmYSSnw7nd8t9KzWbXKKid9lrdVQiw",
+      "k0jBEDVPwKjP7zVWtmcuNJXSBnzK9_cLzHNzYVTtmIoO1ta3119IsKR8z3ntYgxFUgIx_RA4ebVGh3bf-i04_w",
     grant_types: ["refresh_token", "authorization_code"],
     redirect_uris: ["http://localhost:3030/login/callback"],
     response_types: ["code"],

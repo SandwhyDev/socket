@@ -7,40 +7,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Room{
-  id        Int      @id @default(autoincrement())
-  room_id   String    @unique
+model chat {
+  id        Int         @id @default(autoincrement())
+  user      String
+  message   String
+  room_id   String
+
+createdAt   DateTime    @default(now())
+
+  room      room        @relation(fields: [room_id], references: [id], map: "Chat_room_id_fkey")
+  photochat photochat[]
+
+  @@index([room_id], map: "Chat_room_id_fkey")
+}
+
+model photochat {
+  id         Int      @id @default(autoincrement())
+  filename   String?
+  mimetype   String?
+  size       Int?
+  chat_id    Int
+  image_path String?
+  createdAt  DateTime @default(now())
+  chat       chat     @relation(fields: [chat_id], references: [id], onDelete: Cascade, map: "photoChat_chat_id_fkey")
+
+  @@index([chat_id], map: "photoChat_chat_id_fkey")
+}
+
+model room {
+  id       String @id @unique(map: "Room_id_key")
+  room_id  String
   category String
-  createdAt DateTime  @default(now())
-
-
-  chat           Chat[]
+  username String
+  chat     chat[]
 }
-
-model Chat {
-  id        Int      @id @default(autoincrement())
-  user      String?
-  message   String?
-  room_id   String?
-  createdAt DateTime  @default(now())
-
-  room      Room?      @relation(fields: [room_id], references: [room_id], onDelete: Cascade)
-
-  photo     photoChat[]
-}
-
-model photoChat {
-  id          Int      @id @default(autoincrement())
-  filename    String?
-  mimetype    String?
-  size        Int?   
-  chat_id     Int      
-  image_path  String?
-  createdAt   DateTime @default(now())
-
-  chat        Chat?    @relation(fields: [chat_id], references: [id], onDelete: Cascade)
-
-}
-
-
-

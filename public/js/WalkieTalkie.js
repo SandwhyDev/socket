@@ -2,7 +2,7 @@ var socket = io();
 var Usercounter = 0;
 
 socket.on("connect", () => {
-  socket.emit("join-room-walkie-talkie", ROOM_ID);
+  socket.emit("join-room-walkie-talkie", ROOM_ID, user, ROOM_CATEGORY);
 });
 
 socket.on("audio final", function (audioChunks) {

@@ -3,6 +3,7 @@ const ImageChat = require("../libs/Multer");
 const uid = require("../libs/uuid");
 const { ChatModels } = require("../models/ChatModels");
 const PhotoChatModels = require("../models/PhotoChatModels");
+const { RoomModels } = require("../models/RoomModels");
 
 const ChatControllers = express.Router();
 
@@ -11,16 +12,30 @@ ChatControllers.post("/chat/create", ImageChat.single("foto"), async (req, res) 
     const data = await req.body;
     const file = await req.file;
 
-    console.log(file);
+    const findRoom = await RoomModels.findFirst({
+      where:{
+        room_id: data.room_id
+      }
+    })
+
+    if(!findRoom){
+      res.status(404).json({
+        success: true,
+        message: "room tidak di temukan"
+      })
+
+      return
+    }
 
     const create = await ChatModels.create({
       data: {
         user: data.user,
         message: data.message,
-        room_id: data.room_id,
+        room_id: findRoom.id,
       },
     });
-
+    
+    console.log(create);
     if (file != undefined) {
       await PhotoChatModels.create({
         data: {
@@ -47,23 +62,36 @@ ChatControllers.post("/chat/create", ImageChat.single("foto"), async (req, res) 
 
 ChatControllers.post("/chat/read", async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = await req.query;
-    const skip = (page - 1) * limit;
-    const { filter } = await req.body;
+    const data  = await req.body;
+
+    const findRoom = await RoomModels.findFirst({
+      where:{
+        room_id: data.room_id
+      }
+    })
+
+    if(!findRoom){
+      res.status(404).json({
+        success: true,
+        message: "room tidak di temukan"
+      })
+
+      return
+    }
+
     const readUser = await ChatModels.findMany({
-      where: filter,
-      include: {
-        photo: true,
+      where: {
+        room_id: findRoom.id
       },
+      include:{
+        photochat: true
+      }
     });
 
-    const cn = await ChatModels.count();
     res.status(200).json({
-      currentPage: parseInt(page),
-      total_page: Math.ceil(cn / limit),
-      total_data: cn,
-      query: readUser,
       success: true,
+      query: readUser,
+
     });
   } catch (error) {
     res.status(500).json({

@@ -73,7 +73,7 @@ imageimage.on("change", () => {
     mimetypeFoto = file.mimetype;
     sizeFoto = file.size;
 
-    const image = $("<img>").attr("src", `http://localhost:3030/images/${gambar}`);
+    const image = $("<img>").attr("src", `http://localhost:3030/images/${gambar}`) .attr("id", "foto_review");
 
     const BatalSend = `<p class="batal-send-image" onclick="batalSendImage('${gambar}')">X</p>`;
 
@@ -117,7 +117,6 @@ text.addEventListener("keydown", (e) => {
 socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) => {
   const file = imageTest.files[0];
 
-  console.log(file);
   const foto = {
     name: sendFoto,
     mimetype: mimetypeFoto,
@@ -130,6 +129,7 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
     room_id: ROOM_ID,
     foto: foto,
   };
+
 
   if (data.user === userName) {
     const formData = new FormData();
@@ -166,7 +166,7 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
             `<div class="message" id="chatsaya">
         <b><i class="far fa-user-circle"></i> <span> ${userName === user ? "me" : userName}</span> </b>
         <div class="image_message">
-             <img src="http://localhost:3030/images/${sendFoto}" alt="foto_message" >
+             <img src="http://localhost:3030/images/${sendFoto}" class="fotochat" alt="foto_chat" >
              </div>
 
         <span>${message} </span>
@@ -178,7 +178,7 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
             `<div class="message">
       <b><i class="far fa-user-circle"></i> <span> ${userName === user ? "me" : userName}</span> </b>
       <div class="image_message">
-           <img src="http://localhost:3030/images/${sendFoto}" alt="foto_message" >
+           <img src="http://localhost:3030/images/${sendFoto}" class="fotochat" alt="foto_chat" >
            </div>
 
       <span>${message} </span>
@@ -197,7 +197,7 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
             `<div class="message" id="chatsaya">
         <b><i class="far fa-user-circle"></i> <span> ${userName === user ? "me" : userName}</span> </b>
         <div class="image_message">
-             <img src="http://localhost:3030/images/${sendFoto}" alt="foto_message" >
+             <img src="http://localhost:3030/images/${sendFoto}" class="fotochat" alt="foto_chat" >
       <p class="time_message">${time}</p>
 
              </div>
@@ -208,7 +208,7 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
             `<div class="message">
       <b><i class="far fa-user-circle"></i> <span> ${userName === user ? "me" : userName}</span> </b>
       <div class="image_message">
-           <img src="http://localhost:3030/images/${sendFoto}" alt="foto_message" >
+           <img src="http://localhost:3030/images/${sendFoto}" class="fotochat" alt="foto_chat" >
       <p class="time_message">${time}</p>
 
            </div>
@@ -241,9 +241,8 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
 });
 
 const dataRead = {
-  filter: {
     room_id: ROOM_ID,
-  },
+  
 };
 
 fetch("http://localhost:3030/api/chat/read", {
@@ -258,7 +257,8 @@ fetch("http://localhost:3030/api/chat/read", {
     data.query.map((e) => {
       const { date, time } = parseTime(e.createdAt);
 
-      if (e.photo.length > 0 && e.message.length > 0) {
+
+      if (e.photochat.length > 0 && e.message.length > 0) {
         // kirim foto dan message
         {
           e.user === user
@@ -267,7 +267,7 @@ fetch("http://localhost:3030/api/chat/read", {
                 `<div class="message" id="chatsaya">
           <b><i class="far fa-user-circle"></i> <span> ${e.user === user ? "me" : e.user}</span> </b>
           <div class="image_message">
-               <img src="${e.photo[0].image_path}" alt="foto_message" >
+               <img src="${e.photochat[0].image_path}" class="fotochat" alt="foto_chat" >
                </div>
   
           <span>${e.message} </span>
@@ -279,7 +279,7 @@ fetch("http://localhost:3030/api/chat/read", {
                 `<div class="message">
         <b><i class="far fa-user-circle"></i> <span> ${e.user === user ? "me" : e.user}</span> </b>
         <div class="image_message">
-             <img src="${e.photo[0].image_path}" alt="foto_message" >
+             <img src="${e.photochat[0].image_path}" class="fotochat" alt="foto_chat" >
              </div>
   
         <span>${e.message} </span>
@@ -288,7 +288,7 @@ fetch("http://localhost:3030/api/chat/read", {
     </div>`);
         }
         return;
-      } else if (e.photo.length > 0 && e.message.length === 0) {
+      } else if (e.photochat.length > 0 && e.message.length === 0) {
         // KIRIM FOTO TANPA MESSAGE
 
         {
@@ -298,7 +298,7 @@ fetch("http://localhost:3030/api/chat/read", {
                 `<div class="message" id="chatsaya">
           <b><i class="far fa-user-circle"></i> <span> ${e.user === user ? "me" : e.user}</span> </b>
           <div class="image_message">
-               <img src="${e.photo[0].image_path}" alt="foto_message" >
+               <img src="${e.photochat[0].image_path}" class="fotochat" alt="foto_chat" >
           <p class="time_message">${time}</p>
 
                </div>
@@ -309,7 +309,7 @@ fetch("http://localhost:3030/api/chat/read", {
                 `<div class="message">
         <b><i class="far fa-user-circle"></i> <span> ${e.user === user ? "me" : e.user}</span> </b>
         <div class="image_message">
-             <img src="${e.photo[0].image_path}" alt="foto_message" >
+             <img src="${e.photochat[0].image_path}" class="fotochat" alt="foto_chat" >
           <p class="time_message">${time}</p>
 
              </div>
@@ -317,7 +317,7 @@ fetch("http://localhost:3030/api/chat/read", {
     </div>`);
         }
         return;
-      } else if (e.photo.length === 0 && e.message.length > 0) {
+      } else if (e.photochat.length === 0 && e.message.length > 0) {
         // KIRIM MESSAGE TANPA FOTO
         const date = new Date(e.createdAt);
         const time = date.toLocaleTimeString([], {
