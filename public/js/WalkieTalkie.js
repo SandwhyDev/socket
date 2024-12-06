@@ -46,6 +46,8 @@ navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
   $(".play-button")
     .on("mousedown touchstart", function (e) {
       startRecording(mediaRecorder);
+
+      console.log(stream);
     })
     .bind("mouseup mouseleave touchend", function () {
       stopRecording(mediaRecorder);

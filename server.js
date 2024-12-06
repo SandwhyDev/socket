@@ -9,16 +9,13 @@ const path = require("path");
 const socketConn = require("./src/libs/socket");
 const ChatControllers = require("./src/controllers/ChatControllers");
 const RoomControllers = require("./src/controllers/RoomControllers");
-
+const cors = require("cors");
 const app = express();
 const server = require("http").Server(app);
 
 app.set("view engine", "ejs");
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-  },
-});
+
+const io = require("socket.io")(server);
 
 const opinions = {
   debug: true,
@@ -36,9 +33,14 @@ const isLoggedIn = (req, res, next) => {
   next();
 };
 
-app.use("/peer", ExpressPeerServer(server, opinions));
+// app.use("/peer", ExpressPeerServer(server, opinions));
 app.use(express.static("public"));
 app.use(express.json({ limit: "100mb" }));
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(cookieParser());
 app.use(
   express.urlencoded({
@@ -72,8 +74,7 @@ passport.deserializeUser((user, done) => {
 Issuer.discover("http://localhost:4000/oidc").then(function (oidcIssuer) {
   var client = new oidcIssuer.Client({
     client_id: "PlGg3ioi1Talwr5-u_wSD",
-    client_secret:
-      "k0jBEDVPwKjP7zVWtmcuNJXSBnzK9_cLzHNzYVTtmIoO1ta3119IsKR8z3ntYgxFUgIx_RA4ebVGh3bf-i04_w",
+    client_secret: "k0jBEDVPwKjP7zVWtmcuNJXSBnzK9_cLzHNzYVTtmIoO1ta3119IsKR8z3ntYgxFUgIx_RA4ebVGh3bf-i04_w",
     grant_types: ["refresh_token", "authorization_code"],
     redirect_uris: ["http://localhost:3030/login/callback"],
     response_types: ["code"],
@@ -82,24 +83,21 @@ Issuer.discover("http://localhost:4000/oidc").then(function (oidcIssuer) {
 
   passport.use(
     "oidc",
-    new Strategy(
-      { client, passReqToCallback: true },
-      (req, tokenSet, userinfo, done) => {
-        // console.log("tokenSet", tokenSet);
-        // console.log("userinfo", userinfo);
+    new Strategy({ client, passReqToCallback: true }, (req, tokenSet, userinfo, done) => {
+      // console.log("tokenSet", tokenSet);
+      // console.log("userinfo", userinfo);
 
-        const result = {
-          tokenSet: tokenSet,
-          userinfo: userinfo,
-          rahasia: client,
-        };
-        req.session.tokenSet = tokenSet;
-        req.session.userinfo = userinfo;
-        req.session.rahasia = client;
+      const result = {
+        tokenSet: tokenSet,
+        userinfo: userinfo,
+        rahasia: client,
+      };
+      req.session.tokenSet = tokenSet;
+      req.session.userinfo = userinfo;
+      req.session.rahasia = client;
 
-        return done(null, result);
-      }
-    )
+      return done(null, result);
+    })
   );
 });
 
@@ -158,8 +156,19 @@ app.get("/chat/:room", isLoggedIn, (req, res) => {
   });
 });
 
+// io.set({
+//   transports: ["websocket"],
+// });
+
 io.on("connection", (socket) => {
-  socketConn(socket, io, fs, path);
+  // socketConn(socket, io, fs, path);
+
+  socket.on("sendMessage", (data) => {
+    console.log(data);
+  });
+
+  socket.emit("test", "halo client");
+  console.log("client connected");
 });
 
 app.use("/api", ChatControllers);

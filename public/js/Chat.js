@@ -73,7 +73,7 @@ imageimage.on("change", () => {
     mimetypeFoto = file.mimetype;
     sizeFoto = file.size;
 
-    const image = $("<img>").attr("src", `http://localhost:3030/images/${gambar}`) .attr("id", "foto_review");
+    const image = $("<img>").attr("src", `http://localhost:3030/images/${gambar}`).attr("id", "foto_review");
 
     const BatalSend = `<p class="batal-send-image" onclick="batalSendImage('${gambar}')">X</p>`;
 
@@ -129,7 +129,6 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
     room_id: ROOM_ID,
     foto: foto,
   };
-
 
   if (data.user === userName) {
     const formData = new FormData();
@@ -241,8 +240,7 @@ socket.on("sendMessage", (message, sendFoto, userName, mimetypeFoto, sizeFoto) =
 });
 
 const dataRead = {
-    room_id: ROOM_ID,
-  
+  room_id: ROOM_ID,
 };
 
 fetch("http://localhost:3030/api/chat/read", {
@@ -256,7 +254,6 @@ fetch("http://localhost:3030/api/chat/read", {
   .then((data) =>
     data.query.map((e) => {
       const { date, time } = parseTime(e.createdAt);
-
 
       if (e.photochat.length > 0 && e.message.length > 0) {
         // kirim foto dan message

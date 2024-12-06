@@ -120,21 +120,7 @@ navigator.mediaDevices
               }
             });
 
-            // cek jika e.name dengan user sekarang
-            // if (e.name !== user && !addedUsers.includes(e.name)) {
-            //   if (
-            //     $(document)
-            //       .find("#video-grid")
-            //       .find("video[id='" + e.name + "']").length == 0
-            //   ) {
-            //     addedUsers.push(e.name);
-
-            //     // console.log(e.name, userVideoStream);
-            //     addVideoStream(video, userVideoStream, e.name);
-            //   } else {
-            //     // console.log(3);
-            //   }
-            // }
+            
           });
         });
       });
@@ -166,13 +152,13 @@ const connectToNewUser = (userId, stream, userName) => {
 };
 
 socket.on("ijin host", (idUser, userName) => {
-  // console.log(`${userName} ingin join`);
+  console.log(`${userName} ingin join`);
   let ijin = confirm(`${userName} ingin join`);
 
-  if (!ijin) {
-    socket.emit("ijin masuk", false, userName, idUser);
-    return false;
-  }
+  // if (!ijin) {
+  //   socket.emit("ijin masuk", false, userName, idUser);
+  //   return false;
+  // }
 
   socket.emit("ijin masuk", true, userName, idUser);
 });

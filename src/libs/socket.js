@@ -96,6 +96,8 @@ const socketConn = (socket, io, fs, path, fetch) => {
   });
 
   socket.on("join-room-walkie-talkie", (roomId, user) => {
+    console.log(roomId, user);
+
     socket.join(roomId);
 
     createRoom(roomId, "WALKIE-TALKIE", user);
@@ -123,6 +125,7 @@ const socketConn = (socket, io, fs, path, fetch) => {
     });
 
     socket.on("audioMessage", (msg) => {
+      console.log(msg);
       socket.to(roomId).broadcast.emit("audio final", msg);
     });
   });
